@@ -1,0 +1,1809 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>goalmates — 친구들과 목표 달성</title>
+<meta name="description" content="친구들과 함께 목표를 세우고 달성률을 비교하세요" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Gmarket+Sans:wght@300;500;700&family=Pretendard:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+:root {
+  --brand: #6C63FF;
+  --brand-light: #EEEDFe;
+  --brand-dark: #3C3489;
+  --green: #1D9E75;
+  --green-light: #E1F5EE;
+  --amber: #EF9F27;
+  --amber-light: #FAEEDA;
+  --red: #E24B4A;
+  --red-light: #FCEBEB;
+  --gray-50: #F8F8F8;
+  --gray-100: #F0F0F0;
+  --gray-200: #E0E0E0;
+  --gray-400: #9E9E9E;
+  --gray-600: #5E5E5E;
+  --gray-900: #1A1A1A;
+  --white: #FFFFFF;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Pretendard', -apple-system, sans-serif;
+  background: var(--gray-50);
+  color: var(--gray-900);
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── LAYOUT ── */
+.shell {
+  max-width: 480px;
+  margin: 0 auto;
+  min-height: 100vh;
+  background: var(--white);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+/* ── SCREENS ── */
+.screen { display: none; flex-direction: column; flex: 1; }
+.screen.active { display: flex; }
+
+/* ══════════════════════════════
+   ONBOARDING / LOGIN SCREEN
+══════════════════════════════ */
+#screen-login {
+  background: linear-gradient(160deg, #1a1a2e 0%, #16213e 60%, #0f3460 100%);
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  text-align: center;
+}
+
+.login-hero {
+  margin-bottom: 3rem;
+  animation: floatUp .6s ease both;
+}
+
+.login-logo {
+  font-family: 'Gmarket Sans', sans-serif;
+  font-size: 36px;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: -1px;
+  margin-bottom: 8px;
+}
+.login-logo span { color: #a78bfa; }
+
+.login-sub {
+  font-size: 15px;
+  color: rgba(255,255,255,0.55);
+  line-height: 1.6;
+}
+
+.login-cards {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 2.5rem;
+  animation: floatUp .6s .1s ease both;
+}
+
+.login-card {
+  flex: 1;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: var(--radius-md);
+  padding: 1rem .75rem;
+  text-align: center;
+}
+.login-card-icon { font-size: 22px; margin-bottom: 6px; }
+.login-card-text { font-size: 11px; color: rgba(255,255,255,0.5); line-height: 1.4; }
+
+.login-form {
+  width: 100%;
+  animation: floatUp .6s .2s ease both;
+}
+
+.login-input {
+  width: 100%;
+  padding: 14px 16px;
+  border-radius: var(--radius-md);
+  border: 1.5px solid rgba(255,255,255,0.15);
+  background: rgba(255,255,255,0.08);
+  color: #fff;
+  font-size: 15px;
+  font-family: inherit;
+  margin-bottom: 10px;
+  outline: none;
+  transition: border-color .2s;
+}
+.login-input::placeholder { color: rgba(255,255,255,0.3); }
+.login-input:focus { border-color: #a78bfa; }
+
+.btn-primary {
+  width: 100%;
+  padding: 14px;
+  border-radius: var(--radius-md);
+  border: none;
+  background: var(--brand);
+  color: #fff;
+  font-size: 15px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  transition: transform .15s, opacity .15s;
+}
+.btn-primary:hover { opacity: .9; }
+.btn-primary:active { transform: scale(.98); }
+
+.login-divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 16px 0;
+  color: rgba(255,255,255,0.2);
+  font-size: 12px;
+}
+.login-divider::before, .login-divider::after {
+  content: ''; flex: 1; height: 1px; background: rgba(255,255,255,0.1);
+}
+
+.btn-guest {
+  width: 100%;
+  padding: 13px;
+  border-radius: var(--radius-md);
+  border: 1.5px solid rgba(255,255,255,0.15);
+  background: transparent;
+  color: rgba(255,255,255,0.6);
+  font-size: 14px;
+  font-family: inherit;
+  cursor: pointer;
+}
+.btn-guest:hover { background: rgba(255,255,255,0.05); }
+
+/* ══════════════════════════════
+   MAIN APP
+══════════════════════════════ */
+#screen-app { padding-bottom: 72px; }
+
+/* Top header */
+.app-header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: var(--white);
+  border-bottom: 1px solid var(--gray-100);
+  padding: 14px 20px 0;
+}
+
+.app-header-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+.app-logo {
+  font-family: 'Gmarket Sans', sans-serif;
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--gray-900);
+  letter-spacing: -.5px;
+}
+.app-logo span { color: var(--brand); }
+
+.header-right { display: flex; align-items: center; gap: 8px; }
+
+.streak-chip {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  border-radius: 20px;
+  background: var(--amber-light);
+  border: 1px solid #EF9F27;
+  font-size: 12px;
+  font-weight: 600;
+  color: #7A4F00;
+}
+
+.avatar-sm {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  border: 2px solid var(--brand-light);
+  flex-shrink: 0;
+}
+
+/* Tab bar */
+.app-tabs {
+  display: flex;
+  gap: 2px;
+}
+.app-tab {
+  flex: 1;
+  padding: 10px 0 8px;
+  border: none;
+  background: none;
+  font-size: 13px;
+  font-family: inherit;
+  color: var(--gray-400);
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: color .15s, border-color .15s;
+}
+.app-tab.active {
+  color: var(--brand);
+  border-color: var(--brand);
+  font-weight: 600;
+}
+
+/* Bottom nav */
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 480px;
+  background: var(--white);
+  border-top: 1px solid var(--gray-100);
+  display: flex;
+  z-index: 100;
+}
+.bnav-btn {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  padding: 10px 0 14px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  color: var(--gray-400);
+  font-size: 10px;
+  font-family: inherit;
+  transition: color .15s;
+}
+.bnav-btn.active { color: var(--brand); }
+.bnav-icon { font-size: 22px; }
+
+/* ── SCROLL CONTENT ── */
+.scroll-content { flex: 1; overflow-y: auto; padding: 16px 20px; }
+
+/* ══════════════════════════════
+   COMPONENTS
+══════════════════════════════ */
+
+/* Period nav */
+.period-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+  background: var(--gray-50);
+  border-radius: var(--radius-md);
+  padding: 10px 12px;
+}
+.period-nav-btn {
+  border: none;
+  background: none;
+  cursor: pointer;
+  color: var(--gray-400);
+  font-size: 18px;
+  padding: 2px 6px;
+  border-radius: 6px;
+  transition: background .15s;
+}
+.period-nav-btn:hover { background: var(--gray-100); }
+.period-nav-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--gray-900);
+}
+
+/* Stats row */
+.stats-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  margin-bottom: 20px;
+}
+.stat-card {
+  background: var(--white);
+  border: 1px solid var(--gray-100);
+  border-radius: var(--radius-md);
+  padding: 10px 8px;
+  text-align: center;
+  box-shadow: var(--shadow-sm);
+}
+.stat-val { font-size: 18px; font-weight: 700; color: var(--gray-900); }
+.stat-lbl { font-size: 9px; color: var(--gray-400); margin-top: 2px; }
+
+/* Section label */
+.sec-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--gray-600);
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+}
+.sec-label .badge {
+  font-size: 10px;
+  padding: 1px 7px;
+  border-radius: 8px;
+  font-weight: 500;
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+/* Rank list */
+.rank-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px; }
+
+.rank-card {
+  background: var(--white);
+  border: 1px solid var(--gray-100);
+  border-radius: var(--radius-lg);
+  padding: 12px 14px;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  box-shadow: var(--shadow-sm);
+  transition: border-color .15s;
+}
+.rank-card.me {
+  border-color: #c4bfff;
+  background: #FAFAFF;
+}
+.rank-card.rank-1 { border-color: #F5C842; }
+
+.rank-num {
+  font-size: 16px;
+  width: 24px;
+  text-align: center;
+  padding-top: 1px;
+  flex-shrink: 0;
+}
+.rank-num.num { font-size: 13px; color: var(--gray-400); font-weight: 600; padding-top: 4px; }
+
+.rank-body { flex: 1; min-width: 0; }
+.rank-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--gray-900);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 6px;
+  flex-wrap: wrap;
+}
+.me-badge {
+  font-size: 10px;
+  background: var(--brand-light);
+  color: var(--brand-dark);
+  padding: 1px 6px;
+  border-radius: 6px;
+  font-weight: 500;
+}
+.streak-mini {
+  font-size: 10px;
+  background: var(--amber-light);
+  color: #7A4F00;
+  padding: 1px 6px;
+  border-radius: 6px;
+}
+
+.bar-row { display: flex; align-items: center; gap: 8px; }
+.bar-bg {
+  flex: 1;
+  height: 6px;
+  border-radius: 3px;
+  background: var(--gray-100);
+  overflow: hidden;
+}
+.bar-fill {
+  height: 100%;
+  border-radius: 3px;
+  transition: width .6s cubic-bezier(.22,1,.36,1);
+}
+.bar-pct {
+  font-size: 12px;
+  font-weight: 700;
+  min-width: 32px;
+  text-align: right;
+}
+
+.react-row { display: flex; gap: 4px; margin-top: 8px; }
+.react-btn {
+  border: 1px solid var(--gray-200);
+  background: var(--gray-50);
+  border-radius: 12px;
+  font-size: 12px;
+  padding: 3px 8px;
+  cursor: pointer;
+  color: var(--gray-600);
+  transition: all .15s;
+}
+.react-btn:hover, .react-btn.on {
+  background: var(--brand-light);
+  border-color: #c4bfff;
+  color: var(--brand-dark);
+}
+
+/* Group goals */
+.group-card {
+  background: var(--white);
+  border: 1px solid #9FE1CB;
+  border-radius: var(--radius-lg);
+  padding: 14px;
+  margin-bottom: 20px;
+  box-shadow: var(--shadow-sm);
+}
+.group-goal-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 0;
+  border-bottom: 1px solid var(--gray-100);
+  font-size: 13px;
+}
+.group-goal-item:last-child { border-bottom: none; }
+.gg-text { flex: 1; color: var(--gray-900); }
+.gg-bar-wrap { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
+.gg-bar-bg { width: 64px; height: 4px; border-radius: 2px; background: var(--gray-100); overflow: hidden; }
+.gg-bar-fill { height: 100%; border-radius: 2px; background: var(--green); }
+.gg-count { font-size: 11px; color: var(--green); font-weight: 600; white-space: nowrap; }
+
+/* Bet card */
+.bet-card {
+  background: var(--white);
+  border: 1px solid #c4bfff;
+  border-radius: var(--radius-lg);
+  padding: 14px;
+  margin-bottom: 20px;
+  box-shadow: var(--shadow-sm);
+}
+.bet-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 0;
+  border-bottom: 1px solid var(--gray-100);
+  gap: 6px;
+}
+.bet-item:last-of-type { border-bottom: none; }
+.bet-friend { font-size: 13px; color: var(--gray-600); }
+.bet-stake {
+  font-size: 11px;
+  background: var(--amber-light);
+  color: #7A4F00;
+  padding: 2px 8px;
+  border-radius: 8px;
+  white-space: nowrap;
+}
+.bet-status { font-size: 12px; font-weight: 600; white-space: nowrap; }
+.btn-dashed {
+  width: 100%;
+  margin-top: 10px;
+  padding: 8px;
+  border: 1.5px dashed var(--gray-200);
+  border-radius: var(--radius-sm);
+  background: none;
+  color: var(--gray-400);
+  font-size: 13px;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all .15s;
+}
+.btn-dashed:hover { border-color: var(--brand); color: var(--brand); background: var(--brand-light); }
+
+/* My goals card */
+.my-goals-card {
+  background: var(--white);
+  border: 1px solid var(--gray-100);
+  border-radius: var(--radius-lg);
+  padding: 14px;
+  margin-bottom: 20px;
+  box-shadow: var(--shadow-sm);
+}
+.card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+.card-title { font-size: 14px; font-weight: 600; color: var(--gray-900); }
+.card-actions { display: flex; gap: 6px; }
+
+.btn-sm {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 5px 10px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--gray-200);
+  background: var(--white);
+  color: var(--gray-600);
+  font-size: 12px;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all .15s;
+}
+.btn-sm:hover { background: var(--gray-50); }
+.btn-sm.brand {
+  background: var(--brand);
+  border-color: var(--brand);
+  color: white;
+}
+.btn-sm.brand:hover { opacity: .9; }
+
+/* Goal items */
+.goal-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--gray-100);
+}
+.goal-item:last-of-type { border-bottom: none; }
+
+.check-box {
+  width: 20px;
+  height: 20px;
+  border-radius: 5px;
+  border: 2px solid var(--gray-200);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all .15s;
+  font-size: 12px;
+}
+.check-box.done {
+  background: var(--green);
+  border-color: var(--green);
+  color: white;
+}
+
+.goal-text { flex: 1; font-size: 13px; color: var(--gray-900); line-height: 1.4; }
+.goal-text.done { text-decoration: line-through; color: var(--gray-400); }
+
+.tag {
+  font-size: 10px;
+  padding: 2px 7px;
+  border-radius: 8px;
+  font-weight: 500;
+  flex-shrink: 0;
+}
+
+.goal-del {
+  border: none;
+  background: none;
+  cursor: pointer;
+  color: var(--gray-200);
+  font-size: 16px;
+  padding: 2px;
+  transition: color .15s;
+  flex-shrink: 0;
+}
+.goal-del:hover { color: var(--red); }
+
+.fail-select {
+  display: block;
+  font-size: 11px;
+  padding: 4px 8px;
+  margin: 2px 0 6px 28px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--gray-200);
+  background: var(--gray-50);
+  color: var(--gray-600);
+  font-family: inherit;
+  cursor: pointer;
+}
+
+/* Add form */
+.add-form {
+  display: flex;
+  gap: 6px;
+  margin-top: 10px;
+  flex-wrap: wrap;
+}
+.add-form input {
+  flex: 1;
+  min-width: 120px;
+  padding: 8px 12px;
+  border: 1.5px solid var(--gray-200);
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  font-family: inherit;
+  color: var(--gray-900);
+  background: var(--white);
+  outline: none;
+  transition: border-color .2s;
+}
+.add-form input:focus { border-color: var(--brand); }
+.add-form select {
+  padding: 8px 6px;
+  border: 1.5px solid var(--gray-200);
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  font-family: inherit;
+  background: var(--white);
+  color: var(--gray-900);
+  cursor: pointer;
+}
+.add-form .confirm-btn {
+  padding: 8px 14px;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: var(--brand);
+  color: white;
+  font-size: 13px;
+  font-family: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* Hitmap */
+.hitmap {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+  margin-bottom: 20px;
+}
+.hm-col { text-align: center; }
+.hm-lbl { font-size: 9px; color: var(--gray-400); margin-bottom: 4px; font-weight: 600; }
+.hm-dot {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 600;
+  border: 1px solid var(--gray-100);
+  color: var(--gray-400);
+  cursor: pointer;
+  transition: transform .1s;
+}
+.hm-dot:hover { transform: scale(1.1); }
+.hm-dot.today { border-color: var(--brand); color: var(--brand); }
+.hm-dot.hh { background: var(--green); border-color: var(--green); color: white; }
+.hm-dot.hm { background: #9FE1CB; border-color: #5DCAA5; color: #085041; }
+.hm-dot.hl { background: var(--brand-light); border-color: #c4bfff; color: var(--brand-dark); }
+
+/* Report */
+.report-card {
+  background: var(--white);
+  border: 1px solid var(--gray-100);
+  border-radius: var(--radius-lg);
+  padding: 16px;
+  margin-bottom: 20px;
+  box-shadow: var(--shadow-sm);
+}
+.report-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+.report-cat { font-size: 12px; color: var(--gray-600); width: 70px; flex-shrink: 0; }
+.report-bar-bg { flex: 1; height: 6px; border-radius: 3px; background: var(--gray-100); overflow: hidden; }
+.report-bar-fill { height: 100%; border-radius: 3px; }
+.report-pct { font-size: 12px; font-weight: 700; color: var(--gray-900); min-width: 32px; text-align: right; }
+
+.insight-box {
+  background: var(--brand-light);
+  border-radius: var(--radius-sm);
+  padding: 10px 12px;
+  font-size: 12px;
+  color: var(--brand-dark);
+  line-height: 1.5;
+  margin-top: 12px;
+}
+
+.monthly-hm {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 3px;
+  margin-bottom: 20px;
+}
+.mhm-dot {
+  aspect-ratio: 1;
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 9px;
+  font-weight: 600;
+  border: 1px solid var(--gray-100);
+  color: var(--gray-400);
+  cursor: pointer;
+}
+.mhm-dot.hh { background: var(--green); border-color: var(--green); color: white; }
+.mhm-dot.hm { background: #9FE1CB; border-color: #5DCAA5; color: #085041; }
+.mhm-dot.hl { background: var(--brand-light); border-color: #c4bfff; color: var(--brand-dark); }
+
+/* Bar chart */
+.bar-chart {
+  display: flex;
+  align-items: flex-end;
+  gap: 10px;
+  height: 100px;
+  margin-bottom: 8px;
+}
+.bar-chart-col {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  height: 100%;
+  justify-content: flex-end;
+}
+.bar-chart-bar {
+  width: 100%;
+  border-radius: 5px 5px 0 0;
+  min-height: 4px;
+}
+.bar-chart-lbl { font-size: 10px; color: var(--gray-400); }
+.bar-chart-val { font-size: 11px; font-weight: 700; color: var(--gray-900); }
+
+/* Group / invite screen */
+#screen-group {
+  background: var(--gray-50);
+  padding: 20px;
+  flex: 1;
+}
+
+.group-header {
+  text-align: center;
+  margin-bottom: 24px;
+}
+.group-header h2 {
+  font-family: 'Gmarket Sans', sans-serif;
+  font-size: 22px;
+  margin-bottom: 6px;
+}
+.group-header p { font-size: 14px; color: var(--gray-400); }
+
+.group-select-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
+.group-item {
+  background: var(--white);
+  border: 1.5px solid var(--gray-100);
+  border-radius: var(--radius-lg);
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  transition: border-color .15s, box-shadow .15s;
+}
+.group-item:hover, .group-item.selected {
+  border-color: var(--brand);
+  box-shadow: 0 0 0 3px var(--brand-light);
+}
+.group-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-sm);
+  background: var(--brand-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+.group-info { flex: 1; }
+.group-name { font-size: 14px; font-weight: 600; }
+.group-meta { font-size: 12px; color: var(--gray-400); margin-top: 2px; }
+.group-members { display: flex; }
+.mini-av {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 2px solid var(--white);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 9px;
+  font-weight: 600;
+  margin-left: -6px;
+}
+.mini-av:first-child { margin-left: 0; }
+
+.invite-box {
+  background: var(--white);
+  border: 1.5px dashed var(--gray-200);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  text-align: center;
+  margin-bottom: 20px;
+}
+.invite-code {
+  font-family: 'Gmarket Sans', sans-serif;
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: 6px;
+  color: var(--brand);
+  margin: 12px 0;
+}
+.invite-sub { font-size: 12px; color: var(--gray-400); }
+.btn-copy {
+  margin-top: 12px;
+  padding: 10px 20px;
+  border-radius: var(--radius-sm);
+  border: 1.5px solid var(--brand);
+  background: var(--brand-light);
+  color: var(--brand-dark);
+  font-size: 13px;
+  font-family: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all .15s;
+}
+.btn-copy:hover { background: var(--brand); color: white; }
+
+/* ── UTILS ── */
+.hidden { display: none !important; }
+.mb16 { margin-bottom: 16px; }
+.mb8 { margin-bottom: 8px; }
+.text-center { text-align: center; }
+
+/* ── ANIMATIONS ── */
+@keyframes floatUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+.fin { animation: fadeIn .2s ease; }
+
+/* ── DB STATUS BANNER ── */
+.db-banner {
+  background: #fff8e1;
+  border-bottom: 1px solid #FFE082;
+  padding: 8px 16px;
+  font-size: 11px;
+  color: #7A4F00;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+</style>
+</head>
+<body>
+
+<!-- ══ LOGIN SCREEN ══ -->
+<div class="shell">
+<div id="screen-login" class="screen active">
+  <div class="login-hero">
+    <div class="login-logo">goal<span>mates</span></div>
+    <div class="login-sub">친구들과 목표를 세우고<br>달성률을 함께 확인해요</div>
+  </div>
+
+  <div class="login-cards">
+    <div class="login-card">
+      <div class="login-card-icon">🎯</div>
+      <div class="login-card-text">내 목표는<br>나만 볼 수 있어요</div>
+    </div>
+    <div class="login-card">
+      <div class="login-card-icon">🏆</div>
+      <div class="login-card-text">달성률만<br>공유돼요</div>
+    </div>
+    <div class="login-card">
+      <div class="login-card-icon">⚔️</div>
+      <div class="login-card-text">친구와<br>내기도 가능</div>
+    </div>
+  </div>
+
+  <div class="login-form">
+    <input class="login-input" type="text" id="login-name" placeholder="닉네임을 입력하세요 (예: 김민준)" maxlength="10" />
+    <button class="btn-primary" onclick="doLogin()">시작하기 →</button>
+    <div class="login-divider">또는</div>
+    <button class="btn-guest" onclick="doGuest()">게스트로 둘러보기</button>
+  </div>
+</div>
+
+<!-- ══ MAIN APP ══ -->
+<div id="screen-app" class="screen">
+
+  <div class="db-banner" id="db-banner">
+    ⚡ 현재 로컬 저장 모드 — Supabase 연동 시 친구들과 실시간 공유 가능
+  </div>
+
+  <!-- Header -->
+  <div class="app-header">
+    <div class="app-header-top">
+      <div class="app-logo">goal<span>mates</span></div>
+      <div class="header-right">
+        <div class="streak-chip">🔥 <span id="streak-num">0</span>일</div>
+        <div class="avatar-sm" id="user-avatar" style="background:#EEEDFE;color:#3C3489" onclick="showProfile()"></div>
+      </div>
+    </div>
+    <div class="app-tabs">
+      <button class="app-tab active" id="tab-weekly" onclick="switchTab('weekly')">주차별</button>
+      <button class="app-tab" id="tab-daily" onclick="switchTab('daily')">데일리</button>
+      <button class="app-tab" id="tab-report" onclick="switchTab('report')">리포트</button>
+    </div>
+  </div>
+
+  <!-- Tab views -->
+  <div class="scroll-content">
+
+    <!-- WEEKLY VIEW -->
+    <div id="view-weekly" class="fin">
+      <div class="period-nav">
+        <button class="period-nav-btn" onclick="changeWeek(-1)">‹</button>
+        <div class="period-nav-title" id="week-label"></div>
+        <button class="period-nav-btn" onclick="changeWeek(1)">›</button>
+      </div>
+
+      <div class="stats-row">
+        <div class="stat-card"><div class="stat-val" id="s-total">0</div><div class="stat-lbl">목표수</div></div>
+        <div class="stat-card"><div class="stat-val" id="s-done" style="color:var(--green)">0</div><div class="stat-lbl">완료</div></div>
+        <div class="stat-card"><div class="stat-val" id="s-rate">0%</div><div class="stat-lbl">달성률</div></div>
+        <div class="stat-card"><div class="stat-val" id="s-rank" style="color:var(--amber)">-위</div><div class="stat-lbl">랭킹</div></div>
+      </div>
+
+      <div class="sec-label">🏆 이번 주 랭킹</div>
+      <div class="rank-list" id="weekly-rank"></div>
+
+      <div class="sec-label">🎯 공동 목표 <span class="badge" style="background:var(--green-light);color:#085041">팀 전체 달성 시 완료</span></div>
+      <div class="group-card" id="group-goals-container"></div>
+
+      <div class="sec-label">⚔️ 이번 주 내기</div>
+      <div class="bet-card">
+        <div id="bet-list"></div>
+        <button class="btn-dashed" onclick="addBet()">+ 새 내기 제안하기</button>
+      </div>
+
+      <div class="sec-label">
+        📋 내 목표
+        <span style="font-size:10px;color:var(--gray-400);font-weight:400;text-transform:none;letter-spacing:0">나만 볼 수 있어요</span>
+        <button class="btn-sm" style="margin-left:auto;font-size:11px" onclick="loadTemplate()">📌 지난 주 불러오기</button>
+      </div>
+      <div class="my-goals-card">
+        <div class="card-header">
+          <div class="card-title" id="weekly-goals-title">이번 주 목표</div>
+          <div class="card-actions">
+            <button class="btn-sm brand" onclick="toggleAddForm('weekly-add-form')">+ 추가</button>
+          </div>
+        </div>
+        <div id="weekly-goals-list"></div>
+        <div id="weekly-add-form" class="add-form hidden">
+          <input type="text" id="w-goal-input" placeholder="목표를 입력하세요..." />
+          <select id="w-goal-cat">
+            <option value="study">📚</option>
+            <option value="health">💪</option>
+            <option value="work">💼</option>
+            <option value="life">🌱</option>
+          </select>
+          <select id="w-goal-diff">
+            <option value="easy">쉬움</option>
+            <option value="mid" selected>보통</option>
+            <option value="hard">어려움</option>
+          </select>
+          <button class="confirm-btn" onclick="addWeeklyGoal()">추가</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- DAILY VIEW -->
+    <div id="view-daily" class="hidden fin">
+      <div class="period-nav">
+        <button class="period-nav-btn" onclick="changeDay(-7)">‹</button>
+        <div class="period-nav-title" id="day-label"></div>
+        <button class="period-nav-btn" onclick="changeDay(7)">›</button>
+      </div>
+
+      <div class="sec-label">📅 이번 주 히트맵</div>
+      <div class="hitmap" id="hitmap"></div>
+
+      <div class="sec-label">오늘 달성률 비교</div>
+      <div class="rank-list" id="daily-rank"></div>
+
+      <div class="sec-label">
+        오늘 내 목표
+        <span style="font-size:10px;color:var(--gray-400);font-weight:400;text-transform:none;letter-spacing:0">나만 볼 수 있어요</span>
+      </div>
+      <div class="my-goals-card">
+        <div class="card-header">
+          <div class="card-title">오늘의 목표</div>
+          <button class="btn-sm brand" onclick="toggleAddForm('daily-add-form')">+ 추가</button>
+        </div>
+        <div id="daily-goals-list"></div>
+        <div id="daily-add-form" class="add-form hidden">
+          <input type="text" id="d-goal-input" placeholder="오늘 목표 입력..." />
+          <select id="d-goal-cat">
+            <option value="study">📚</option>
+            <option value="health">💪</option>
+            <option value="work">💼</option>
+            <option value="life">🌱</option>
+          </select>
+          <button class="confirm-btn" onclick="addDailyGoal()">추가</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- REPORT VIEW -->
+    <div id="view-report" class="hidden fin">
+      <div class="sec-label">📊 이번 달 카테고리별 달성률</div>
+      <div class="report-card" id="report-cats"></div>
+
+      <div class="sec-label">🗓️ 월간 히트맵 (5월)</div>
+      <div class="monthly-hm" id="monthly-hitmap"></div>
+
+      <div class="sec-label">📈 주차별 달성률</div>
+      <div class="report-card" id="weekly-trend"></div>
+
+      <div class="sec-label">❌ 미달성 이유 분석</div>
+      <div class="report-card" id="fail-analysis"></div>
+    </div>
+
+  </div><!-- /scroll-content -->
+
+  <!-- Bottom Nav -->
+  <div class="bottom-nav">
+    <button class="bnav-btn active" id="bnav-home" onclick="switchNav('home')">
+      <span class="bnav-icon">🏠</span>홈
+    </button>
+    <button class="bnav-btn" id="bnav-group" onclick="switchNav('group')">
+      <span class="bnav-icon">👥</span>그룹
+    </button>
+    <button class="bnav-btn" id="bnav-notify" onclick="switchNav('notify')">
+      <span class="bnav-icon">🔔</span>알림
+    </button>
+    <button class="bnav-btn" id="bnav-profile" onclick="switchNav('profile')">
+      <span class="bnav-icon">😊</span>프로필
+    </button>
+  </div>
+</div>
+
+</div><!-- /shell -->
+
+<script>
+// ════════════════════════════════════════════
+//   CONFIG
+// ════════════════════════════════════════════
+const SUPABASE_URL     = 'https://fwtxztvdkrjueamkgejd.supabase.co';
+const SUPABASE_ANON_KEY= 'sb_publishable_ZI2AAmK6aKuu7W-wk5uwRg_IJ0yxsyR';
+const USE_SUPABASE     = true;
+
+// ════════════════════════════════════════════
+//   SUPABASE CLIENT (lightweight fetch wrapper)
+// ════════════════════════════════════════════
+const sb = {
+  _h(extra={}) {
+    return {
+      'Content-Type': 'application/json',
+      'apikey': SUPABASE_ANON_KEY,
+      'Authorization': 'Bearer ' + SUPABASE_ANON_KEY,
+      'Prefer': 'return=representation',
+      ...extra
+    };
+  },
+  async select(table, params='') {
+    try {
+      const r = await fetch(`${SUPABASE_URL}/rest/v1/${table}?${params}`, { headers: sb._h() });
+      if (!r.ok) { console.warn('select', r.status, await r.text()); return []; }
+      return r.json();
+    } catch(e) { console.error('select', e); return []; }
+  },
+  async insert(table, body) {
+    try {
+      const r = await fetch(`${SUPABASE_URL}/rest/v1/${table}`, {
+        method:'POST', headers: sb._h(), body: JSON.stringify(body)
+      });
+      if (!r.ok) { console.warn('insert', r.status, await r.text()); return null; }
+      const d = await r.json();
+      return Array.isArray(d) ? d[0] : d;
+    } catch(e) { console.error('insert', e); return null; }
+  },
+  async update(table, body, filter) {
+    try {
+      const r = await fetch(`${SUPABASE_URL}/rest/v1/${table}?${filter}`, {
+        method:'PATCH', headers: sb._h(), body: JSON.stringify(body)
+      });
+      return r.ok;
+    } catch(e) { return false; }
+  },
+  async delete(table, filter) {
+    try {
+      const r = await fetch(`${SUPABASE_URL}/rest/v1/${table}?${filter}`, {
+        method:'DELETE', headers: sb._h()
+      });
+      return r.ok;
+    } catch(e) { return false; }
+  },
+  async upsert(table, body, onConflict) {
+    try {
+      const r = await fetch(`${SUPABASE_URL}/rest/v1/${table}?on_conflict=${onConflict}`, {
+        method:'POST', headers: sb._h({'Prefer':'resolution=merge-duplicates,return=representation'}),
+        body: JSON.stringify(body)
+      });
+      return r.ok;
+    } catch(e) { return false; }
+  }
+};
+
+// ════════════════════════════════════════════
+//   DATA
+// ════════════════════════════════════════════
+const TAGS = {
+  study: { label:'📚 공부', bg:'#E6F1FB', color:'#0C447C' },
+  health:{ label:'💪 운동', bg:'#EAF3DE', color:'#27500A' },
+  work:  { label:'💼 업무', bg:'#FAEEDA', color:'#633806' },
+  life:  { label:'🌱 생활', bg:'#E1F5EE', color:'#085041' }
+};
+const DIFF = {
+  easy: { label:'쉬움',   bg:'#EAF3DE', color:'#27500A', w:1   },
+  mid:  { label:'보통',   bg:'#FAEEDA', color:'#633806', w:1.5 },
+  hard: { label:'어려움', bg:'#FAECE7', color:'#4A1B0C', w:2   }
+};
+const AV_COLORS = [
+  { bg:'#EEEDFE', c:'#3C3489' },
+  { bg:'#E1F5EE', c:'#085041' },
+  { bg:'#FAEEDA', c:'#633806' },
+  { bg:'#FAECE7', c:'#4A1B0C' },
+  { bg:'#E6F1FB', c:'#0C447C' },
+  { bg:'#EAF3DE', c:'#27500A' },
+];
+const FAIL_REASONS = ['바빴음','깜빡함','목표가 너무 높았음','몸 상태 안 좋음','기타'];
+
+function getMonday(offset=0) {
+  const d = new Date();
+  d.setDate(d.getDate() + offset*7);
+  d.setDate(d.getDate() - ((d.getDay()+6)%7));
+  return d.toISOString().slice(0,10);
+}
+function getTodayStr(offset=0) {
+  const d = new Date();
+  d.setDate(d.getDate() + offset);
+  return d.toISOString().slice(0,10);
+}
+
+// State
+let state = {
+  user: null,       // { id, name, initials, colorIdx }
+  groupId: null,    // 현재 그룹 ID
+  groupCode: null,  // 초대코드
+  weekOffset: 0,
+  dayOffset: 0,
+  weeklyGoals: [],
+  dailyGoals: [],
+  groupMembers: [], // [{ user_id, name, color_idx, rate }]
+  groupGoals: [],
+  bets: [],
+  reactions: {},
+  streak: 0,
+};
+
+// ════════════════════════════════════════════
+//   AUTH + SUPABASE
+// ════════════════════════════════════════════
+function doLogin() {
+  const name = document.getElementById('login-name').value.trim();
+  if (!name) { alert('닉네임을 입력해주세요!'); return; }
+  initUser(name);
+}
+function doGuest() { initUser('게스트'+(Math.floor(Math.random()*1000))); }
+
+async function testConnection() {
+  try {
+    const r = await fetch(`${SUPABASE_URL}/rest/v1/users?limit=1`, {
+      headers: {
+        'apikey': SUPABASE_ANON_KEY,
+        'Authorization': 'Bearer ' + SUPABASE_ANON_KEY
+      }
+    });
+    console.log('DB status:', r.status, r.statusText);
+    const txt = await r.text();
+    console.log('DB response:', txt);
+    return r.ok || r.status === 406;
+  } catch(e) {
+    console.error('DB error:', e);
+    return false;
+  }
+}
+
+async function initUser(name) {
+  const initials = name.slice(0,2);
+  const colorIdx = Math.abs(name.charCodeAt(0)) % AV_COLORS.length;
+
+  // 로컬 세션 저장
+  const cached = JSON.parse(localStorage.getItem('gm_user')||'null');
+  if (cached && cached.name === name && cached.id && !cached.id.startsWith('local')) {
+    state.user = cached;
+  } else {
+    // Supabase에 유저 생성 or 조회
+    let user = null;
+    try {
+      const ok = await testConnection();
+      console.log('connection ok:', ok);
+      // 같은 이름 유저 찾기
+      const existing = await sb.select('users', `name=eq.${encodeURIComponent(name)}&limit=1`);
+      console.log('existing users:', existing);
+      if (existing && existing.length > 0) {
+        user = existing[0];
+      } else {
+        user = await sb.insert('users', { name, color_idx: colorIdx });
+        console.log('created user:', user);
+      }
+    } catch(e) { console.warn('DB연결 실패, 로컬모드로 진행', e); }
+
+    state.user = {
+      id: user?.id || 'local-'+Date.now(),
+      name,
+      initials,
+      colorIdx: user?.color_idx ?? colorIdx
+    };
+    localStorage.setItem('gm_user', JSON.stringify(state.user));
+  }
+
+  // 그룹 찾기 or 생성
+  await initGroup();
+  showApp();
+  await loadAllData();
+}
+
+async function initGroup() {
+  if (!state.user.id.startsWith('local')) {
+    try {
+      // 내가 속한 그룹 찾기
+      const memberships = await sb.select('group_members', `user_id=eq.${state.user.id}&limit=1`);
+      if (memberships && memberships.length > 0) {
+        state.groupId = memberships[0].group_id;
+        const grp = await sb.select('groups', `id=eq.${state.groupId}&limit=1`);
+        if (grp && grp.length > 0) state.groupCode = grp[0].invite_code;
+      } else {
+        // 새 그룹 생성
+        const grp = await sb.insert('groups', { name: state.user.name+'의 팀' });
+        if (grp && grp.id) {
+          state.groupId = grp.id;
+          state.groupCode = grp.invite_code;
+          await sb.insert('group_members', { group_id: grp.id, user_id: state.user.id });
+        }
+      }
+    } catch(e) { console.warn('그룹 초기화 실패', e); }
+  }
+}
+
+async function loadAllData() {
+  if (!state.user.id || state.user.id.startsWith('local')) return; // 로컬모드
+  try {
+    const monday = getMonday(state.weekOffset);
+    const today  = getTodayStr(state.dayOffset);
+
+    // 내 주간 목표
+    const wg = await sb.select('goals',
+      `user_id=eq.${state.user.id}&is_daily=eq.false&week_start=eq.${monday}&order=created_at.asc`);
+    state.weeklyGoals = (wg||[]).map(g => ({
+      id:g.id, text:g.text, cat:g.category, diff:g.difficulty,
+      done:g.done, failReason:g.fail_reason||''
+    }));
+
+    // 내 데일리 목표
+    const dg = await sb.select('goals',
+      `user_id=eq.${state.user.id}&is_daily=eq.true&day_date=eq.${today}&order=created_at.asc`);
+    state.dailyGoals = (dg||[]).map(g => ({
+      id:g.id, text:g.text, cat:g.category, done:g.done
+    }));
+
+    // 그룹 멤버 달성률 (뷰에서)
+    if (state.groupId) {
+      const rates = await sb.select('group_rates',
+        `group_id=eq.${state.groupId}&week_start=eq.${monday}`);
+      state.groupMembers = (rates||[]).map((r,i) => ({
+        user_id: r.user_id,
+        name: r.name,
+        colorIdx: r.color_idx ?? (i % AV_COLORS.length),
+        initials: r.name.slice(0,2),
+        rate: Number(r.rate)||0,
+        streak: 0,
+        isMe: r.user_id === state.user.id
+      }));
+
+      // 공동 목표
+      const gg = await sb.select('group_goals',
+        `group_id=eq.${state.groupId}&week_start=eq.${monday}`);
+      state.groupGoals = (gg||[]).map(g => ({
+        text:g.text, progress:0, total: state.groupMembers.length||1
+      }));
+
+      // 내기
+      const bt = await sb.select('bets',
+        `group_id=eq.${state.groupId}&order=created_at.desc`);
+      state.bets = (bt||[]).map(b => ({
+        id:b.id, friend:'상대방', stake:b.stake,
+        myRate: calcWeeklyRate(), friendRate:0
+      }));
+    }
+
+    // 연속 달성 스트릭 계산
+    state.streak = calcStreak();
+
+    renderAll();
+  } catch(e) { console.warn('데이터 로드 실패', e); }
+}
+
+function calcStreak() {
+  // 간단 버전: 오늘 포함 연속 달성일 계산 (로컬)
+  const saved = JSON.parse(localStorage.getItem('gm_streak')||'{"count":0,"last":""}');
+  const today = getTodayStr();
+  if (saved.last === today) return saved.count;
+  const yesterday = getTodayStr(-1);
+  const count = saved.last === yesterday ? saved.count + 1 : 1;
+  localStorage.setItem('gm_streak', JSON.stringify({ count, last: today }));
+  return count;
+}
+
+function showApp() {
+  document.getElementById('screen-login').classList.remove('active');
+  document.getElementById('screen-app').classList.add('active');
+  const av = AV_COLORS[state.user.colorIdx % AV_COLORS.length];
+  const el = document.getElementById('user-avatar');
+  el.textContent = state.user.initials;
+  el.style.background = av.bg;
+  el.style.color = av.c;
+  document.getElementById('streak-num').textContent = state.streak;
+  document.getElementById('week-label').textContent = getWeekLabel();
+  document.getElementById('day-label').textContent = getDayLabel();
+
+  // DB 배너 업데이트
+  const banner = document.getElementById('db-banner');
+  if (!state.user.id || state.user.id.startsWith('local')) {
+    banner.innerHTML = '⚡ 로컬 모드 — DB 연결 실패. 새로고침 해보세요.';
+  } else {
+    banner.innerHTML = `✅ Supabase 연결됨 &nbsp;|&nbsp; 그룹 초대코드: <strong>${state.groupCode||'생성 중...'}</strong> &nbsp;<button onclick="copyCode()" style="padding:2px 8px;border-radius:6px;border:1px solid #9FE1CB;background:white;cursor:pointer;font-size:11px">복사</button>`;
+    banner.style.background = '#E1F5EE';
+    banner.style.borderColor = '#9FE1CB';
+    banner.style.color = '#085041';
+  }
+  renderAll();
+}
+
+function copyCode() {
+  navigator.clipboard.writeText(state.groupCode||'').then(()=>alert('초대코드 복사됨! 친구에게 공유하세요 🎉'));
+}
+
+async function joinGroup() {
+  const code = prompt('친구에게 받은 초대코드를 입력하세요');
+  if (!code) return;
+  try {
+    const grp = await sb.select('groups', `invite_code=eq.${code.toUpperCase()}&limit=1`);
+    if (!grp || !grp.length) { alert('코드를 찾을 수 없어요. 다시 확인해주세요!'); return; }
+    await sb.upsert('group_members', { group_id: grp[0].id, user_id: state.user.id }, 'group_id,user_id');
+    state.groupId = grp[0].id;
+    state.groupCode = grp[0].invite_code;
+    alert('그룹 합류 성공! 🎉');
+    await loadAllData();
+  } catch(e) { alert('오류가 발생했어요. 다시 시도해주세요.'); }
+}
+
+function showProfile() {
+  alert(`${state.user.name} 님\n🔥 ${state.streak}일 연속 달성 중!\n이번 주 달성률: ${calcWeeklyRate()}%\n\n그룹 초대코드: ${state.groupCode||'없음'}`);
+}
+
+// ════════════════════════════════════════════
+//   COMPUTED
+// ════════════════════════════════════════════
+function calcWeeklyRate() {
+  const goals = state.weeklyGoals;
+  if (!goals.length) return 0;
+  const score = goals.reduce((a,g) => a + (g.done ? DIFF[g.diff].w : 0), 0);
+  const max   = goals.reduce((a,g) => a + DIFF[g.diff].w, 0);
+  return Math.round(score / max * 100);
+}
+function calcDailyRate() {
+  const g = state.dailyGoals;
+  return g.length ? Math.round(g.filter(x=>x.done).length / g.length * 100) : 0;
+}
+
+function getWeekRankData() {
+  if (state.groupMembers.length > 0) return [...state.groupMembers].sort((a,b) => b.rate - a.rate);
+  return [{ id:'me', name: state.user?.name||'나', isMe:true,
+    colorIdx: state.user?.colorIdx??0, initials: state.user?.initials||'나',
+    rate: calcWeeklyRate(), streak: state.streak }];
+}
+
+function getDayRankData() {
+  if (state.groupMembers.length > 0) return [...state.groupMembers].map(m=>({...m, rate: m.isMe ? calcDailyRate() : m.rate})).sort((a,b)=>b.rate-a.rate);
+  return [{ id:'me', name: state.user?.name||'나', isMe:true,
+    colorIdx: state.user?.colorIdx??0, initials: state.user?.initials||'나',
+    rate: calcDailyRate(), streak: state.streak }];
+}
+
+// ════════════════════════════════════════════
+//   DATE HELPERS
+// ════════════════════════════════════════════
+function getWeekLabel() {
+  const now = new Date();
+  now.setDate(now.getDate() + state.weekOffset * 7);
+  const d = new Date(now);
+  d.setDate(d.getDate() - d.getDay() + 1);
+  const e = new Date(d); e.setDate(d.getDate() + 6);
+  const f = x => `${x.getMonth()+1}/${x.getDate()}`;
+  const y = d.getFullYear();
+  const wn = Math.ceil((((d - new Date(y,0,1))/86400000) + new Date(y,0,1).getDay()+1)/7);
+  return `${y}년 ${wn}주차  ${f(d)}~${f(e)}`;
+}
+function getDayLabel() {
+  const d = new Date();
+  d.setDate(d.getDate() + state.dayOffset);
+  return `${d.getFullYear()}년 ${d.getMonth()+1}월 ${d.getDate()}일 (${['일','월','화','수','목','금','토'][d.getDay()]})`;
+}
+
+// ════════════════════════════════════════════
+//   RENDER FUNCTIONS
+// ════════════════════════════════════════════
+function renderAll() {
+  renderStats();
+  renderWeeklyGoals();
+  renderRank('weekly-rank', getWeekRankData());
+  renderGroupGoals();
+  renderBets();
+}
+
+function renderStats() {
+  const goals = state.weeklyGoals;
+  const done  = goals.filter(g=>g.done).length;
+  const rate  = calcWeeklyRate();
+  const rank  = getWeekRankData().findIndex(m=>m.isMe) + 1;
+  document.getElementById('s-total').textContent = goals.length;
+  document.getElementById('s-done').textContent  = done;
+  document.getElementById('s-rate').textContent  = rate + '%';
+  document.getElementById('s-rank').textContent  = rank + '위';
+}
+
+function renderRank(containerId, data) {
+  const el = document.getElementById(containerId);
+  el.innerHTML = data.map((m, i) => {
+    const av  = AV_COLORS[m.colorIdx % AV_COLORS.length];
+    const pct = m.rate;
+    const col = pct >= 80 ? 'var(--green)' : pct >= 50 ? 'var(--amber)' : 'var(--brand)';
+    const medal = i===0?'🥇':i===1?'🥈':i===2?'🥉':null;
+    const k = m.id || m.name;
+    if (!state.reactions[k]) state.reactions[k] = {};
+    const reacts = m.isMe ? '' : ['👏','🔥','💪'].map(r => {
+      const cnt = state.reactions[k][r] || 0;
+      return `<button class="react-btn${cnt?' on':''}" onclick="doReact('${k}','${r}',this)">${r}${cnt?' '+cnt:''}</button>`;
+    }).join('');
+    return `<div class="rank-card${m.isMe?' me':''}${i===0?' rank-1':''}">
+      <div class="rank-num${medal?'':' num'}">${medal || (i+1)}</div>
+      <div class="avatar-sm" style="background:${av.bg};color:${av.c};width:36px;height:36px;font-size:13px;flex-shrink:0">${m.initials}</div>
+      <div class="rank-body">
+        <div class="rank-name">
+          ${m.name}
+          ${m.isMe ? '<span class="me-badge">나</span>' : ''}
+          <span class="streak-mini">🔥${m.streak}일</span>
+        </div>
+        <div class="bar-row">
+          <div class="bar-bg"><div class="bar-fill" style="width:${pct}%;background:${col}"></div></div>
+          <div class="bar-pct" style="color:${col}">${pct}%</div>
+        </div>
+        ${reacts ? '<div class="react-row">'+reacts+'</div>' : ''}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function renderGroupGoals() {
+  const el = document.getElementById('group-goals-container');
+  const goals = state.groupGoals.length ? state.groupGoals : [{text:"공동 목표를 추가해보세요",progress:0,total:1}];
+  el.innerHTML = goals.map(g => {
+    const pct = Math.round(g.progress / g.total * 100);
+    return `<div class="group-goal-item">
+      <span class="gg-text">${g.text}</span>
+      <div class="gg-bar-wrap">
+        <div class="gg-bar-bg"><div class="gg-bar-fill" style="width:${pct}%"></div></div>
+        <span class="gg-count">${g.progress}/${g.total}</span>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function renderBets() {
+  document.getElementById('bet-list').innerHTML = state.bets.map(b => {
+    const win = b.myRate >= b.friendRate;
+    return `<div class="bet-item">
+      <span class="bet-friend">vs ${b.friend}</span>
+      <span class="bet-stake">☕ ${b.stake}</span>
+      <span class="bet-status" style="color:${win?'var(--green)':'var(--red)'}">${win?'이기는 중 👊':'지는 중 😅'}</span>
+    </div>`;
+  }).join('');
+}
+
+function renderWeeklyGoals() {
+  const el = document.getElementById('weekly-goals-list');
+  if (!state.weeklyGoals.length) {
+    el.innerHTML = '<div style="font-size:13px;color:var(--gray-400);padding:.5rem 0;text-align:center">목표를 추가해보세요! 🎯</div>';
+    return;
+  }
+  el.innerHTML = state.weeklyGoals.map((g,i) => {
+    const t  = TAGS[g.cat];
+    const df = DIFF[g.diff];
+    const failHtml = !g.done
+      ? `<select class="fail-select" onchange="setFail(${i},this.value)">
+           <option value="">미달성 이유 선택...</option>
+           ${FAIL_REASONS.map(r=>`<option${g.failReason===r?' selected':''}>${r}</option>`).join('')}
+         </select>`
+      : '';
+    return `<div>
+      <div class="goal-item">
+        <div class="check-box${g.done?' done':''}" onclick="toggleWeeklyGoal(${i})">${g.done?'✓':''}</div>
+        <div class="goal-text${g.done?' done':''}">${g.text}</div>
+        <span class="tag" style="background:${df.bg};color:${df.color}">${df.label}</span>
+        <span class="tag" style="background:${t.bg};color:${t.color}">${t.label}</span>
+        <button class="goal-del" onclick="deleteWeeklyGoal(${i})" aria-label="삭제">×</button>
+      </div>
+      ${failHtml}
+    </div>`;
+  }).join('');
+}
+
+function renderDailyGoals() {
+  const el = document.getElementById('daily-goals-list');
+  if (!state.dailyGoals.length) {
+    el.innerHTML = '<div style="font-size:13px;color:var(--gray-400);padding:.5rem 0;text-align:center">오늘 목표를 추가해보세요! 🌅</div>';
+    return;
+  }
+  el.innerHTML = state.dailyGoals.map((g,i) => {
+    const t = TAGS[g.cat];
+    return `<div class="goal-item">
+      <div class="check-box${g.done?' done':''}" onclick="toggleDailyGoal(${i})">${g.done?'✓':''}</div>
+      <div class="goal-text${g.done?' done':''}">${g.text}</div>
+      <span class="tag" style="background:${t.bg};color:${t.color}">${t.label}</span>
+      <button class="goal-del" onclick="deleteDailyGoal(${i})" aria-label="삭제">×</button>
+    </div>`;
+  }).join('');
+}
+
+function renderHitmap() {
+  const days = ['월','화','수','목','금','토','일'];
+  const today = new Date(); today.setDate(today.getDate() + state.dayOffset);
+  const mon   = new Date(today); mon.setDate(today.getDate() - today.getDay() + 1);
+  const seeds = [1.0, 0.6, 0.8, 0.3, 0.9, 0.5, 0.7];
+  document.getElementById('hitmap').innerHTML = days.map((d,i) => {
+    const dd = new Date(mon); dd.setDate(mon.getDate() + i);
+    const isT = dd.toDateString() === today.toDateString();
+    const v = seeds[i];
+    const cls = v>=0.8 ? 'hh' : v>=0.5 ? 'hm' : 'hl';
+    return `<div class="hm-col">
+      <div class="hm-lbl">${d}</div>
+      <div class="hm-dot${isT?' today':' '+cls}" title="${Math.round(v*100)}% 달성">${dd.getDate()}</div>
+    </div>`;
+  }).join('');
+}
+
+function renderReport() {
+  // Category chart
+  const cats = [
+    { l:'📚 공부', p:72, col:'#378ADD' },
+    { l:'💪 운동', p:85, col:'var(--green)' },
+    { l:'💼 업무', p:50, col:'var(--amber)' },
+    { l:'🌱 생활', p:60, col:'#639922' }
+  ];
+  document.getElementById('report-cats').innerHTML =
+    cats.map(c=>`<div class="report-row">
+      <div class="report-cat">${c.l}</div>
+      <div class="report-bar-bg"><div class="report-bar-fill" style="width:${c.p}%;background:${c.col}"></div></div>
+      <div class="report-pct">${c.p}%</div>
+    </div>`).join('') +
+    `<div class="insight-box">💡 <strong>운동</strong>은 꾸준하지만 <strong>업무</strong> 목표가 자주 미달성이에요.<br>목표 난이도를 낮춰보는 건 어떨까요?</div>`;
+
+  // Monthly hitmap
+  const s2=[0.9,0.3,0.8,1,0.6,0.5,0.7,0.4,0.9,0.8,0.6,0.3,1,0.7,0.5,0.8,0.9,0.4,0.6,0.7,0.3,1,0.8,0.5,0.9,0.6,0.4,0.7,0.8,0.3,0.9];
+  document.getElementById('monthly-hitmap').innerHTML = Array.from({length:31},(_,i)=>{
+    const v=s2[i]; const cls=v>=0.8?'hh':v>=0.5?'hm':'hl';
+    return `<div class="mhm-dot ${cls}">${i+1}</div>`;
+  }).join('');
+
+  // Weekly trend
+  const wks=['1주','2주','3주','4주','5주'], wv=[60,72,55,80,50];
+  document.getElementById('weekly-trend').innerHTML =
+    `<div class="bar-chart">
+      ${wks.map((w,i)=>`<div class="bar-chart-col">
+        <div class="bar-chart-val">${wv[i]}%</div>
+        <div class="bar-chart-bar" style="height:${wv[i]*0.7}px;background:${wv[i]>=70?'var(--green)':wv[i]>=50?'var(--amber)':'var(--brand)'}"></div>
+        <div class="bar-chart-lbl">${w}</div>
+      </div>`).join('')}
+    </div>`;
+
+  // Fail analysis
+  const fails=[{r:'깜빡함',n:4},{r:'바빴음',n:3},{r:'목표가 너무 높았음',n:2},{r:'몸 상태 안 좋음',n:1}];
+  const fmax=fails[0].n;
+  document.getElementById('fail-analysis').innerHTML =
+    fails.map(f=>`<div class="report-row">
+      <div class="report-cat" style="width:130px;font-size:12px">${f.r}</div>
+      <div class="report-bar-bg"><div class="report-bar-fill" style="width:${Math.round(f.n/fmax*100)}%;background:var(--brand)"></div></div>
+      <div class="report-pct">${f.n}회</div>
+    </div>`).join('');
+}
+
+// ════════════════════════════════════════════
+//   ACTIONS
+// ════════════════════════════════════════════
+//   ACTIONS (Supabase 연동)
+// ════════════════════════════════════════════
+async function toggleWeeklyGoal(i) {
+  const g = state.weeklyGoals[i];
+  g.done = !g.done;
+  if (g.done) g.failReason = '';
+  if (state.user.id && !state.user.id.startsWith('local') && g.id) {
+    await sb.update('goals', { done: g.done, fail_reason: g.failReason||null }, `id=eq.${g.id}`);
+    await loadAllData(); return;
+  }
+  renderWeeklyGoals(); renderStats(); renderRank('weekly-rank', getWeekRankData());
+}
+async function deleteWeeklyGoal(i) {
+  const g = state.weeklyGoals[i];
+  if (!state.user.id.startsWith('local') && g.id && !g.id.startsWith('g')) await sb.delete('goals', `id=eq.${g.id}`);
+  state.weeklyGoals.splice(i, 1);
+  renderWeeklyGoals(); renderStats(); renderRank('weekly-rank', getWeekRankData());
+}
+async function setFail(i, v) {
+  state.weeklyGoals[i].failReason = v;
+  const g = state.weeklyGoals[i];
+  if (!state.user.id.startsWith('local') && g.id && !g.id.startsWith('g')) await sb.update('goals', { fail_reason: v||null }, `id=eq.${g.id}`);
+}
+async function addWeeklyGoal() {
+  const txt = document.getElementById('w-goal-input').value.trim();
+  if (!txt) return;
+  const cat = document.getElementById('w-goal-cat').value;
+  const diff = document.getElementById('w-goal-diff').value;
+  const monday = getMonday(state.weekOffset);
+  let id = 'g'+Date.now();
+  if (!state.user.id.startsWith('local')) {
+    try {
+      const row = await sb.insert('goals', { user_id: state.user.id, group_id: state.groupId, text: txt, category: cat, difficulty: diff, is_daily: false, week_start: monday, done: false });
+      if (row?.id) id = row.id;
+    } catch(e) {}
+  }
+  state.weeklyGoals.push({ id, text:txt, cat, diff, done:false, failReason:'' });
+  document.getElementById('w-goal-input').value = '';
+  document.getElementById('weekly-add-form').classList.add('hidden');
+  renderWeeklyGoals(); renderStats(); renderRank('weekly-rank', getWeekRankData());
+}
+async function toggleDailyGoal(i) {
+  const g = state.dailyGoals[i];
+  g.done = !g.done;
+  if (!state.user.id.startsWith('local') && g.id && !g.id.startsWith('d')) await sb.update('goals', { done: g.done }, `id=eq.${g.id}`);
+  renderDailyGoals(); renderRank('daily-rank', getDayRankData());
+}
+async function deleteDailyGoal(i) {
+  const g = state.dailyGoals[i];
+  if (!state.user.id.startsWith('local') && g.id && !g.id.startsWith('d')) await sb.delete('goals', `id=eq.${g.id}`);
+  state.dailyGoals.splice(i, 1);
+  renderDailyGoals();
+}
+async function addDailyGoal() {
+  const txt = document.getElementById('d-goal-input').value.trim();
+  if (!txt) return;
+  const cat = document.getElementById('d-goal-cat').value;
+  const today = getTodayStr(state.dayOffset);
+  let id = 'd'+Date.now();
+  if (!state.user.id.startsWith('local')) {
+    try {
+      const row = await sb.insert('goals', { user_id: state.user.id, group_id: state.groupId, text: txt, category: cat, difficulty: 'mid', is_daily: true, day_date: today, done: false });
+      if (row?.id) id = row.id;
+    } catch(e) {}
+  }
+  state.dailyGoals.push({ id, text:txt, cat, done:false });
+  document.getElementById('d-goal-input').value = '';
+  document.getElementById('daily-add-form').classList.add('hidden');
+  renderDailyGoals(); renderRank('daily-rank', getDayRankData());
+}
+async function doReact(key, r, btn) {
+  if (!state.reactions[key]) state.reactions[key] = {};
+  state.reactions[key][r] = (state.reactions[key][r]||0) + 1;
+  btn.classList.add('on');
+  btn.textContent = r + ' ' + state.reactions[key][r];
+  if (!state.user.id.startsWith('local')) {
+    try { await sb.upsert('reactions', { from_user: state.user.id, to_user: key, emoji: r, week_start: getMonday(state.weekOffset), count: state.reactions[key][r] }, 'from_user,to_user,emoji,week_start'); } catch(e){}
+  }
+}
+async function addBet() {
+  const friend = prompt('내기 상대 이름?'); if (!friend) return;
+  const stake = prompt('내기 내용? (예: 아메리카노)'); if (!stake) return;
+  if (!state.user.id.startsWith('local') && state.groupId) {
+    try { await sb.insert('bets', { user_a: state.user.id, stake, group_id: state.groupId }); } catch(e){}
+  }
+  state.bets.push({ friend, stake, myRate: calcWeeklyRate(), friendRate: 0 });
+  renderBets();
+}
+function loadTemplate() {
+  const tmpl = [
+    { text:'알고리즘 문제 3개 풀기', cat:'study', diff:'hard', done:false, failReason:'' },
+    { text:'운동 주 4회', cat:'health', diff:'mid', done:false, failReason:'' },
+    { text:'TIL 블로그 작성', cat:'work', diff:'mid', done:false, failReason:'' },
+  ];
+  tmpl.forEach(t => { if (!state.weeklyGoals.find(g=>g.text===t.text)) state.weeklyGoals.push({...t, id:'g'+Date.now()+Math.random()}); });
+  renderWeeklyGoals(); renderStats();
+}
+function toggleAddForm(id) {
+  const f = document.getElementById(id);
+  f.classList.toggle('hidden');
+  if (!f.classList.contains('hidden')) { const inp = f.querySelector('input'); if (inp) setTimeout(()=>inp.focus(),50); }
+}
+
+// ════════════════════════════════════════════
+//   NAVIGATION
+// ════════════════════════════════════════════
+let currentTab = 'weekly';
+function switchTab(tab) {
+  currentTab = tab;
+  ['weekly','daily','report'].forEach(t => {
+    document.getElementById('tab-'+t).classList.toggle('active', t===tab);
+    document.getElementById('view-'+t).classList.toggle('hidden', t!==tab);
+  });
+  if (tab==='daily') { document.getElementById('day-label').textContent = getDayLabel(); renderHitmap(); renderDailyGoals(); renderRank('daily-rank', getDayRankData()); }
+  if (tab==='report') renderReport();
+}
+function switchNav(nav) {
+  ['home','group','notify','profile'].forEach(n => document.getElementById('bnav-'+n).classList.toggle('active', n===nav));
+  if (nav==='group') showGroupScreen();
+  if (nav==='notify') alert('🔔 알림 기능은 PWA 배포 후 활성화됩니다!');
+  if (nav==='profile') showProfileScreen();
+}
+function showGroupScreen() {
+  const code = state.groupCode || '없음';
+  if (confirm(`👥 그룹 초대코드: ${code}
+
+친구에게 공유하거나, 친구 코드로 합류하시겠어요?
+
+[확인] 친구 코드 입력  [취소] 닫기`)) joinGroup();
+  document.getElementById('bnav-home').classList.add('active');
+  document.getElementById('bnav-group').classList.remove('active');
+}
+function showProfileScreen() {
+  const u = state.user;
+  alert(`😊 ${u?.name} 님
+🔥 ${state.streak}일 연속 달성!
+이번 주 달성률: ${calcWeeklyRate()}%
+그룹 초대코드: ${state.groupCode||'없음'}`);
+  document.getElementById('bnav-home').classList.add('active');
+  document.getElementById('bnav-profile').classList.remove('active');
+}
+function changeWeek(d) { state.weekOffset += d; document.getElementById('week-label').textContent = getWeekLabel(); if (!state.user?.id?.startsWith('local')) loadAllData(); }
+function changeDay(d) { state.dayOffset += d; document.getElementById('day-label').textContent = getDayLabel(); renderHitmap(); }
+
+// ════════════════════════════════════════════
+//   INIT
+// ════════════════════════════════════════════
+window.addEventListener('DOMContentLoaded', () => {
+  // 이전 세션 자동 로그인
+  const cached = JSON.parse(localStorage.getItem('gm_user')||'null');
+  if (cached?.name) {
+    // 로컬 캐시 초기화 (강제 재연결)
+    localStorage.removeItem('gm_user');
+  }
+});
+</script>
+</body>
+</html>
