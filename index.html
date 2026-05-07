@@ -539,9 +539,10 @@ async function loadAllData() {
       // 그룹 멤버 전체 주간 목표 (공개)
       const allGoals = await sb.select('goals', `group_id=eq.${state.groupId}&is_daily=eq.false&week_start=eq.${monday}&order=created_at.asc`);
       const allDailyGoals = await sb.select('goals', `group_id=eq.${state.groupId}&is_daily=eq.true&day_date=eq.${today}&order=created_at.asc`);
-      // 유저 정보
-      const memberIds = [...new Set((allGoals||[]).map(g=>g.user_id))];
-      let users = await sb.select('users', `id=in.(${memberIds.join(',')})`) || [];
+      // 그룹 멤버 전체 불러오기 (목표 없어도 다 보임)
+      const memberRows = await sb.select('group_members', `group_id=eq.${state.groupId}`);
+      const memberIds = (memberRows||[]).map(m=>m.user_id);
+      let users = memberIds.length ? (await sb.select('users', `id=in.(${memberIds.join(',')})`) || []) : [];
       // 자기 자신도 포함
       if (!users.find(u=>u.id===state.user.id)) users.push({ id:state.user.id, name:state.user.name, color_idx:state.user.colorIdx });
 
